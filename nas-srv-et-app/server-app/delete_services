@@ -1,0 +1,97 @@
+#/bin/bash
+
+if [ $# -eq 0 ];
+then
+> services
+
+pos1=`cat -n server_config.cfg | grep "serviceNamesList" | awk '{print $1}'`
+sed -n "1,$pos1 p" server_config.cfg > server_config1
+printf "\t\t\t\t\t);\n\t};\n}\n" >> server_config1
+cp server_config1 server_config.cfg
+
+for i in $(cat list_of_available_services | awk '{print $2}' | awk -F"ns" '{print $2}'); do
+ip netns del ns$i
+done
+
+rm list_of_available_services
+
+else
+s=$1
+
+pos=0
+cat services | while read line
+do
+pos=$(($pos+1))
+i=`echo $line | awk '{print $1}'`
+if [ "S$i" = "$s" ];
+then
+
+if [ $pos -eq 1 ];
+then
+pos=$(($pos+1))
+sed -n "$pos,$ p" services > server_config1
+cp server_config1 services
+else
+pos=$(($pos-1))
+sed -n "1,$pos p" services > server_config1
+pos=$(($pos+2))
+sed -n "$pos,$ p" services >> server_config1
+cp server_config1 services
+fi
+
+break
+fi
+done
+
+pos=0
+cat server_config.cfg | while read line; do
+pos=$(($pos+1))
+if echo "$line" | grep -Eq "$s";
+then
+pos1=$pos
+if [ $pos1 -eq 1 ];
+then
+pos1=$(($pos1+1))
+sed -n "$pos1,$ p" server_config.cfg > server_config1
+cp server_config1 server_config.cfg
+else
+pos1=$(($pos1-1))
+sed -n "1,$pos1 p" server_config.cfg > server_config1
+pos1=$(($pos1+2))
+sed -n "$pos1,$ p" server_config.cfg >> server_config1
+cp server_config1 server_config.cfg
+fi
+pos=$(($pos-1))
+
+fi
+done
+
+
+cat list_of_available_services | while read line
+do
+pos=$(($pos+1))
+i=`echo $line | awk '{print $1}'`
+if [ "$i" = "$s" ];
+then
+
+if [ $pos -eq 1 ];
+then
+pos=$(($pos+1))
+sed -n "$pos,$ p" list_of_available_services > server_config1
+cp server_config1 list_of_available_services
+else
+pos=$(($pos-1))
+sed -n "1,$pos p" list_of_available_services > server_config1
+pos=$(($pos+2))
+sed -n "$pos,$ p" list_of_available_services >> server_config1
+cp server_config1 list_of_available_services
+fi
+
+i=`echo $line | awk '{print $2}'| awk -F"ns" '{print $2}'`
+ip netns del ns$i
+
+break
+fi
+done
+
+fi
