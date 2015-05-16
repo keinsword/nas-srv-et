@@ -26,22 +26,22 @@ int main(int argc, char *argv[]) {
 
 	openlog("NAS-server_emulator", LOG_PID | LOG_CONS, LOG_DAEMON);
 	printf("Running NAS-server_emulator in daemon mode...\n");
+	
+	if((argc == 2) && (strcmp(argv[1], "-d") == 0)) {
+		int fd;
+		struct rlimit flim;
+		if (getppid() != 1){
+			if(fork() != 0) exit(0);
+			setsid();
+		}
 
-	int fd;
-	struct rlimit flim;
-	if (getppid() != 1){
-		if(fork() != 0) exit(0);
-		setsid();
+		getrlimit(RLIMIT_NOFILE, &flim);
+		for(fd = 0; fd < flim.rlim_max; fd++)
+			close(fd);
+
+		syslog(LOG_INFO, "Daemon has started successfully!");
 	}
-
-	getrlimit(RLIMIT_NOFILE, &flim);
-	for(fd = 0; fd < flim.rlim_max; fd++)
-		close(fd);
-
-	syslog(LOG_INFO, "Daemon has started successfully!");
-
 	sigemptyset(&newset);
-	//sigaddset(&newset, SIGHUP);
 	sigprocmask(SIG_BLOCK, &newset, 0);
 	sa.sa_handler = sig_handler;
 	sigaction(SIGINT, &sa, 0);
