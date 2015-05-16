@@ -2,6 +2,7 @@
 
 mkdir ../nas-srv-et-app
 cp server_config.cfg ../nas-srv-et-app
+cp restart_server ../nas-srv-et-app
 
 gcc -g3 ../nas-srv-et-sources/server/src/server.c \
 ../nas-srv-et-sources/server/src/server-func.c \

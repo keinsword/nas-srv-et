@@ -226,14 +226,13 @@ int recvMessageFromClient(int FD, connection *connListItem, char *buffer) {
 int reckognizeService(connection *connListItem) {
 	int i;
 	for(i = 0; i < num_of_services; i++) {
-		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0)
+		if(strcmp(connListItem->serviceName, srvInfoTable[i].srv_name) == 0)
 			if(connListItem->netns_sock_fd == srvInfoTable[i].netns_fd)
 				return i;
 			else {
 			        if(write(connListItem->clientSockFD, WRONG_SRV_IP_NOTIF, strlen(WRONG_SRV_IP_NOTIF)) < 0)
 			                return SEND_ERR;
 				close(connListItem->clientSockFD);
-				memset(&connListItem, 0, sizeof(connListItem));
 				return SERVICE_IP_ERR;
 			}
 	}
@@ -242,7 +241,6 @@ int reckognizeService(connection *connListItem) {
 		return SEND_ERR;
 
 	close(connListItem->clientSockFD);
-	memset(&connListItem, 0, sizeof(connListItem));
 
 	return SERVICE_NAME_ERR;
 }
@@ -257,7 +255,6 @@ int checkIPset(connection *connListItem, int srvNo) {
 		return SEND_ERR;
 
 	close(connListItem->clientSockFD);
-	memset(&connListItem, 0, sizeof(connListItem));
 
 	return SERVICE_IP_ERR;
 }
@@ -338,8 +335,18 @@ int dataExchangeWithClient(int serverSock, connection *connList, struct epoll_ev
 	if (result == 0) {
 		connList[n].timeout = time(NULL);
 		result = sendMessage(serverSock, &connList[n], buffer);
-		if(result < 0)
+		if(result < 0) {
+			if((result == SERVICE_NAME_ERR) || (result == SERVICE_IP_ERR)) {
+		                close(connList[n].clientSockFD);
+				memset(&connList[n].serviceName, 0, sizeof(connList[n].serviceName));
+        		        memset(&connList[n].clientNickName, 0, sizeof(connList[n].clientNickName));
+				memset(&connList[n].messageText, 0, sizeof(connList[n].messageText));
+		                memset(&connList[n].clientHostName, 0, sizeof(connList[n].clientHostName));
+				connList[n].clientSockFD = 0;
+
+			}
 			return result;
+		}
 	}
 	else {
 		if(transp_proto == TCP)
