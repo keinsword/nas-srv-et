@@ -1,4 +1,4 @@
 #!/bin/bash
 
 killall NAS-srv-et
-./NAS-srv-et
+./NAS-srv-et -d
