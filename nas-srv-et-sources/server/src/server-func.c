@@ -67,6 +67,7 @@ void timeoutCheck(connection *connList) {
 		timeout = time(NULL) - connList[i].timeout;
 		if((timeout > TIMEOUT) && (connList[i].clientHostName[0] != '\0')) {
 			syslog(LOG_INFO, "Timeout period for \"%s\" has experied.\n", connList[i].clientHostName);
+			fprintf(stderr, "Timeout period for \"%s\" has experied.\n", connList[i].clientHostName);
 			close(connList[i].clientSockFD);
 			memset(&connList[i], 0, sizeof(connList[i]));
 			break;
@@ -121,8 +122,6 @@ int acceptNewConnection(int listeningSocket, connection *connList, struct epoll_
 
 	clientSocket = accept(listeningSocket, (struct sockaddr *)&clientAddr, &clientAddrSize);
 
-	printf("Stored FD: %d\n", clientSocket);
-
 	if (clientSocket < 0) {
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 			return 0;
@@ -138,12 +137,12 @@ int acceptNewConnection(int listeningSocket, connection *connList, struct epoll_
 			connList[i].timeout = time(NULL);
 			getnameinfo((struct sockaddr *)&clientAddr, clientAddrSize, connList[i].clientHostName, sizeof(connList[i].clientHostName), NULL, 0, 0);
 			sprintf(connList[i].destinationIpAddr, "%s", getDestinationIP(clientSocket));
-			printf("Dest ip: %s\n", connList[i].destinationIpAddr);
 			event.data.fd = clientSocket;
 			event.events = EPOLLIN;
 			epoll_ctl(epollFD, EPOLL_CTL_ADD, clientSocket, &event);
 
 			syslog(LOG_INFO, "Accepted connection on descriptor %d (hostname: %s)!\n", clientSocket, connList[i].clientHostName);
+			printf("Accepted connection on descriptor %d (hostname: %s)!\n\n", clientSocket, connList[i].clientHostName);
 
 			return clientSocket;
 		}
@@ -156,11 +155,9 @@ int acceptNewConnection(int listeningSocket, connection *connList, struct epoll_
 
 int identifySenderTCP(connection *connList, struct epoll_event *evListItem) {
 	int i;
-	for (i = 0; i < NUM_OF_CONNECTIONS; i++) {
-		printf("Compare FDs: %d | %d\n", evListItem->data.fd, connList[i].clientSockFD);
+	for (i = 0; i < NUM_OF_CONNECTIONS; i++)
 		if (evListItem->data.fd == connList[i].clientSockFD)
 			return i;
-	}
 	return IDENTIFY_ERR;
 }
 
@@ -208,11 +205,10 @@ int recvMessageFromClient(int FD, connection *connListItem, char *buffer) {
 		else
 			return 0;
 	}
-	printf("%s\n", buffer);
 	if (transp_proto == TCP) {
 		if(result == 0) {
 			syslog(LOG_INFO, "Client \"%s\" (at %s) has closed the connection.\n", connListItem->clientNickName, connListItem->clientHostName);
-			printf("ssss\n");
+			printf("Client \"%s\" (at %s) has closed the connection.\n", connListItem->clientNickName, connListItem->clientHostName);
 			return CLIENT_IS_OFFLINE;
 		}
 	}
@@ -230,7 +226,6 @@ int recvMessageFromClient(int FD, connection *connListItem, char *buffer) {
 int reckognizeService(connection *connListItem) {
 	int i;
 	for(i = 0; i < num_of_services; i++) {
-		printf("Comp srv names: %s | %s\n", connListItem->serviceName, srvInfoTable[i].srv_name);
 		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0)
 			if(connListItem->netns_sock_fd == srvInfoTable[i].netns_fd)
 				return i;
@@ -255,7 +250,6 @@ int reckognizeService(connection *connListItem) {
 int checkIPset(connection *connListItem, int srvNo) {
 	int i;
 	for(i = 0; i < srvInfoTable[srvNo].ip_in_set; i++) {
-		printf("Comp IPs: %s | %s\n", connListItem->destinationIpAddr, srvInfoTable[srvNo].ip_set[i]);
 		if(strncmp(connListItem->destinationIpAddr, srvInfoTable[srvNo].ip_set[i], strlen(srvInfoTable[srvNo].ip_set[i])) == 0)
 			return 1;
 	}
@@ -298,6 +292,8 @@ int sendMessage(int sockFD, connection *connListItem, char *buffer) {
 		return srv;
 	if(checkIPset(connListItem, srv) == 1) {
 		syslog(LOG_INFO, "Client \"%s\" got service \"%s\".", connListItem->clientNickName, srvInfoTable[srv].srv_name);
+		printf("Client \"%s\" got service \"%s\".\n", connListItem->clientNickName, srvInfoTable[srv].srv_name);
+		printf("%s: %s\n\n", connListItem->clientNickName, connListItem->messageText);
 		return responseFromService(sockFD, connListItem, buffer, srv);
 	}
 	else

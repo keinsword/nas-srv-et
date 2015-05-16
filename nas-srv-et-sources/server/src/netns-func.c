@@ -37,7 +37,6 @@ int netns_change(char *ns_name, int fd_global_netns) {
   *  "fd_global_netns" < 0)
  */
 	if (ns_name == NULL) {
-		fprintf(stdout,"*** fd_global_netns is:%d\n",fd_global_netns);
 		if (setns(fd_global_netns, CLONE_NEWNET) == -1) {
 			return -1;
 		}

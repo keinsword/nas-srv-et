@@ -76,7 +76,6 @@ void deSerializer(connection *connListItem, char *buffer) {
 		i++;
 		j++;
 	}
-	printf("de serializer is ok\n");
 }
 
 int Divider(int sockFD, char *buffer) {

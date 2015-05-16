@@ -25,9 +25,9 @@ int main(int argc, char *argv[]) {
 	int *fd_socket;
 
 	openlog("NAS-server_emulator", LOG_PID | LOG_CONS, LOG_DAEMON);
-	printf("Running NAS-server_emulator in daemon mode...\n");
 	
 	if((argc == 2) && (strcmp(argv[1], "-d") == 0)) {
+		printf("Running NAS-server_emulator in daemon mode...\n");
 		int fd;
 		struct rlimit flim;
 		if (getppid() != 1){
@@ -113,7 +113,6 @@ void eventLoop(connection *connList, int *pFD_SockArray, int netns_num) {
 			timeoutCheck(connList);
 
 		for(i = 0; i < readyFDs; i++) { // add EPOLLHUP, EPOLLERR
-			printf("rFDs = %d | i = %d\n", readyFDs, i);
 			switch(transp_proto) {
 			case TCP:
 				for(j = 0; j < netns_num; j++) {
