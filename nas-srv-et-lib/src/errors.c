@@ -26,11 +26,11 @@ error errTable[] = {
 		{ INVALID_SIGNATURE, "Invalid protocol signature!\n", 0 },
 
 		//codes of the client errors
-		{ WRONG_SRV_REQ, "You have requested a non-existing service!\n", 1 },
-		{ WRONG_SRV_IP_REQ, "You have requested service by wrong IP-address!\n", 1 },
-		{ NO_MORE_PLACE, "Can't connect to server: no more place!\n", 1 },
-		{ SRV_IS_OFFLINE, "Server is offline!\n", 1 },
-		{ CONNECT_ERR, "Can't connect to server!\n", 1 }
+		{ WRONG_SRV_REQ, "You have requested a non-existing service!", 1 },
+		{ WRONG_SRV_IP_REQ, "Requested service is unavailable for you!", 1 },
+		{ NO_MORE_PLACE, "Can't connect to server: no more place!", 1 },
+		{ SRV_IS_OFFLINE, "Server is offline!", 1 },
+		{ CONNECT_ERR, "Can't connect to server!", 1 }
 };
 
 void handleErr(short errCode) {

@@ -231,12 +231,16 @@ int reckognizeService(connection *connListItem) {
 	int i;
 	for(i = 0; i < num_of_services; i++) {
 		printf("Comp srv names: %s | %s\n", connListItem->serviceName, srvInfoTable[i].srv_name);
-		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0) {
+		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0)
 			if(connListItem->netns_sock_fd == srvInfoTable[i].netns_fd)
 				return i;
-			else
-				return SERVICE_NAME_ERR;
-		}
+			else {
+			        if(write(connListItem->clientSockFD, WRONG_SRV_IP_NOTIF, strlen(WRONG_SRV_IP_NOTIF)) < 0)
+			                return SEND_ERR;
+				close(connListItem->clientSockFD);
+				memset(&connListItem, 0, sizeof(connListItem));
+				return SERVICE_IP_ERR;
+			}
 	}
 
 	if(write(connListItem->clientSockFD, WRONG_SRV_NOTIF, strlen(WRONG_SRV_NOTIF)) < 0)

@@ -30,8 +30,8 @@
 #define MAX_HEADER_SIZE 30
 #define MAX_PAYLOAD_SIZE 1560
 
-#define WRONG_SRV_NOTIF "You have requested a non-existent service"
-#define WRONG_SRV_IP_NOTIF "You have requested service by incorrect IP-address"
+#define WRONG_SRV_NOTIF "You have requested a non-existent service!"
+#define WRONG_SRV_IP_NOTIF "Requested service is unavailable for you!"
 #define NO_MORE_PLACE_NOTIF "No more place for new clients"
 #define CRC_MISSMATCH_NOTIF "Checksum missmatch"
 #define SRV_IS_OFFLINE_NOTIF "Server is offline now"
