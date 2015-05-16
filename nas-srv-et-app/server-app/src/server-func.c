@@ -297,7 +297,7 @@ int sendMessage(int sockFD, connection *connListItem, char *buffer) {
 	if(srv < 0)
 		return srv;
 	if(checkIPset(connListItem, srv) == 1) {
-		syslog(LOG_INFO, "Client \"%s\" has received service \"%s\".", connListItem->clientNickName, srvInfoTable[srv].srv_name);
+		syslog(LOG_INFO, "Client \"%s\" got service \"%s\".", connListItem->clientNickName, srvInfoTable[srv].srv_name);
 		return responseFromService(sockFD, connListItem, buffer, srv);
 	}
 	else

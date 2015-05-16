@@ -3,7 +3,7 @@
 const char SEG_WARNING[] = "SEGMENTATED_MESSAGES_WILL_COME:";
 const char ACK[] = "ACK\0";
 
-const char *srvResponseTemplate = "\n________\nResponse from service ";
+const char *srvResponseTemplate = "//Response from service ";
 
 void Serializer(connection *conn, char *buffer) {
 	char header[MAX_HEADER_SIZE];
