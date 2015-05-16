@@ -66,7 +66,7 @@ void timeoutCheck(connection *connList);
 
 int createServerSocket();
 
-int acceptNewConnection(int listeningSocket, connection *connList);
+int acceptNewConnection(int listeningSocket, connection *connList, struct epoll_event *evListItem);
 
 int identifySenderTCP(connection *connList, struct epoll_event *evListItem);
 

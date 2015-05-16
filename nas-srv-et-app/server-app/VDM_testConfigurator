@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 if [ $# -eq 0 ];
 then
@@ -65,7 +65,7 @@ fi
 done
 pos3=$(($pos1+$pos2))
 sed -n "$pos1,$pos3 p" server_config.cfg >> server_config1
-echo "$service_name: { service_Ip = [$qoute$veth_ip$qoute]; };" >> server_config1
+echo "$service_name: { service_Ip = [$qoute$vxlan_ip$qoute]; };" >> server_config1
 pos3=$(($pos3+1))
 sed -n "$pos3,$ p" server_config.cfg >> server_config1
 cp server_config1 server_config.cfg

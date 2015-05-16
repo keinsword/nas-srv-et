@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
 		netns_names = (char **)malloc(netns_num * sizeof(char *));
 		for(i = 0; i < netns_num; i++) {
 			netns_names[i] = (char *)malloc(5);
-			sprintf(netns_names[i], "ns%d", i+1);
+			sprintf(netns_names[i], "ns%d", (netns_num - i));
 		}
 
 		fd_socket = open_socket_in_netns(netns_names, netns_num);
@@ -119,7 +119,7 @@ void eventLoop(connection *connList, int *pFD_SockArray, int netns_num) {
 				for(j = 0; j < netns_num; j++) {
 					if (evList[i].data.fd == pFD_SockArray[j]) {
 						while(1) {
-							result = acceptNewConnection(pFD_SockArray[j], connList);
+							result = acceptNewConnection(pFD_SockArray[j], connList, &evList[i]);
 							if(result < 0)
 								handleErr(result);
 							break;

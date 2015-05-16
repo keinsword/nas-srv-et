@@ -50,6 +50,7 @@ typedef struct {
 	char protoVersion[5];				//версия протокола
 	short length;						//длина сообщения
 	int clientSockFD;					//файловый дескриптор клиентского сокета
+	int netns_sock_fd;
 	char clientHostName[17];			//хостнейм клиента
 	char clientNickName[NICK_SIZE];		//ник пользователя
 	char serviceName[SERVICE_SIZE];		//имя сервиса

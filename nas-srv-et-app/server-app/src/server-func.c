@@ -11,7 +11,7 @@ int readConfigFile(config_t *cfg) {
 	char IPsetPath[100];
 	const char *defaultServicesPath = "application.services";
 
-	if (!config_read_file(cfg, "/home/c4dev/Documents/nas-srv-et/nas-srv-et-app/server-app/server_config.cfg")) {
+	if (!config_read_file(cfg, "server_config.cfg")) {
 		config_destroy(cfg);
 		return CONFIG_READ_ERR;
 	}
@@ -116,7 +116,7 @@ int createServerSocket() {
 	return s;
 }
 
-int acceptNewConnection(int listeningSocket, connection *connList) {
+int acceptNewConnection(int listeningSocket, connection *connList, struct epoll_event *evListItem) {
 	int clientSocket, i;
 
 	clientSocket = accept(listeningSocket, (struct sockaddr *)&clientAddr, &clientAddrSize);
@@ -134,6 +134,7 @@ int acceptNewConnection(int listeningSocket, connection *connList) {
 		if(connList[i].clientHostName[0] == '\0') {
 			fdSetBlocking(clientSocket, 0);
 			connList[i].clientSockFD = clientSocket;
+			connList[i].netns_sock_fd = evListItem->data.fd;
 			connList[i].timeout = time(NULL);
 			getnameinfo((struct sockaddr *)&clientAddr, clientAddrSize, connList[i].clientHostName, sizeof(connList[i].clientHostName), NULL, 0, 0);
 			sprintf(connList[i].destinationIpAddr, "%s", getDestinationIP(clientSocket));
@@ -230,8 +231,12 @@ int reckognizeService(connection *connListItem) {
 	int i;
 	for(i = 0; i < num_of_services; i++) {
 		printf("Comp srv names: %s | %s\n", connListItem->serviceName, srvInfoTable[i].srv_name);
-		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0)
-			return i;
+		if(strncmp(connListItem->serviceName, srvInfoTable[i].srv_name, strlen(srvInfoTable[i].srv_name)) == 0) {
+			if(connListItem->netns_sock_fd == srvInfoTable[i].netns_fd)
+				return i;
+			else
+				return SERVICE_NAME_ERR;
+		}
 	}
 
 	if(write(connListItem->clientSockFD, WRONG_SRV_NOTIF, strlen(WRONG_SRV_NOTIF)) < 0)

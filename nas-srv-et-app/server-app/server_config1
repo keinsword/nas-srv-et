@@ -25,7 +25,7 @@ application:
 "S2",
 "S1"
 					);
-S2: { service_Ip = ["192.168.0.12"]; };
+S2: { service_Ip = ["10.10.11.12"]; };
 S1: { service_Ip = ["10.10.11.11"]; };
 	};
 }
