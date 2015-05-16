@@ -41,7 +41,7 @@ void handleErr(short errCode) {
 			n = i;
 			break;
 		}
-	fprintf(stderr, "%s", errTable[n].errDesc);
+	fprintf(stderr, "%s\n", errTable[n].errDesc);
 	syslog(LOG_INFO, "%s", errTable[n].errDesc);
 	if(errTable[n].isCritical == 1)
 		exit(EXIT_FAILURE);
