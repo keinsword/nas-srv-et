@@ -10,7 +10,7 @@ int checkArgs(char *args[], connection *conn) {
 
 	if((port < 1024) || (port > 65535) || (strncmp(transport, "udp", strlen(transport)) && strncmp(transport, "tcp", strlen(transport))))
 		return INCORRECT_ARGS;
-	else if((strlen(nickname) < 4) && (strlen(nickname) > 15))
+	else if((strlen(nickname) < 4) || (strlen(nickname) > 15))
 		return INCORRECT_ARGS;
 	else if(strlen(service_name) > 8)
 		return INCORRECT_ARGS;

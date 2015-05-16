@@ -35,9 +35,7 @@ int main(int argc, char *argv[]) {
     	close(sockFD);
     }
     else
-    	printf("Usage: %s \"address\" \"port\" \"transport\" \"nickname\" \"service_name\"\n
-		Length of the nickname must be from 4 to 15 symbols.\n
-		Length of the service_name must be less than 8 symbols.\n", argv[0]);
+    	printf("Usage: %s \"address\" \"port\" \"transport\" \"nickname\" \"service_name\"\nLength of the nickname must be from 4 to 15 symbols.\nLength of the service_name must be less than 8 symbols.\n", argv[0]);
 
     return 0;
 }
