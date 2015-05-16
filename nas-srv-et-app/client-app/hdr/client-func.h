@@ -31,11 +31,9 @@ extern const char *exitpr;
 
 void errTableInit();
 
-int checkArgs(char *args[]);
+int checkArgs(char *args[], connection *conn);
 
 int createClientSocket();
-
-void getClientInfo(connection *conn);
 
 int setMessageText(connection *conn);
 

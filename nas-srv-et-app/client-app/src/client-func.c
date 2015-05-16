@@ -2,11 +2,17 @@
 
 const char *exitpr = "exitpr";
 
-int checkArgs(char *args[]) {
+int checkArgs(char *args[], connection *conn) {
 	int port = atoi(args[2]);
 	const char *transport = args[3];
+	const char *nickname = args[4];
+	const char *service_name = args[5];
 
 	if((port < 1024) || (port > 65535) || (strncmp(transport, "udp", strlen(transport)) && strncmp(transport, "tcp", strlen(transport))))
+		return INCORRECT_ARGS;
+	else if((strlen(nickname) < 4) && (strlen(nickname) > 15))
+		return INCORRECT_ARGS;
+	else if(strlen(service_name) > 8)
 		return INCORRECT_ARGS;
 	else {
 		clientConfig.address = args[1];
@@ -16,6 +22,9 @@ int checkArgs(char *args[]) {
 			transp_proto = UDP;
 		else
 			transp_proto = TCP;
+
+		sprintf(conn->clientNickName, "%s", nickname);
+		sprintf(conn->serviceName, "%s", service_name);
 
 		return 0;
 	}
@@ -54,29 +63,6 @@ int createClientSocket() {
 	else
 		printf("Client was started. Using UDP protocol.\n\n");
 	return sockFD;
-}
-
-void getClientInfo(connection *conn) {
-	char temp[MSGSIZE];
-	memset(&temp, 0, sizeof(temp));
-
-    while(1) {
-    	printf("Type your nickname (from 4 to 15 symbols): ");
-    	fgets(temp, sizeof(temp), stdin);
-
-    	if((strlen(temp)-1 >= 4) && (strlen(temp)-1 <=15)) {
-    		strncpy(conn->clientNickName, temp, strlen(temp)-1);
-    		memset(&temp, 0, sizeof(temp));
-			printf("Type the name of the service: ");
-			fgets(temp, sizeof(temp), stdin);
-			strncpy(conn->serviceName, temp, strlen(temp)-1);
-			break;
-    	}
-    	else {
-    		printf("Nickname length should be from 4 to 5 symbols! Try again.\n");
-    		memset(&temp, 0, sizeof(temp));
-    	}
-    }
 }
 
 int setMessageText(connection *conn) {

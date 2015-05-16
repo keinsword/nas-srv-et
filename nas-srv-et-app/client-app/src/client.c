@@ -17,16 +17,14 @@ int main(int argc, char *argv[]) {
 	strcpy(conn.protoName, PROTO_NAME);
 	strcpy(conn.protoVersion, PROTO_VER);
 
-    if (argc == 4) {
-  		result = checkArgs(argv);
+    if (argc == 6) {
+  		result = checkArgs(argv, &conn);
 		if(result < 0)
 		 	handleErr(result);
 
     	sockFD = createClientSocket();
     	if(sockFD < 0)
     		handleErr(sockFD);
-
-    	getClientInfo(&conn);
 
     	while(1) {
     		result = dataExchangeWithServer(&conn, sockFD);
@@ -37,7 +35,9 @@ int main(int argc, char *argv[]) {
     	close(sockFD);
     }
     else
-    	printf("Usage: %s address port transport\n", argv[0]);
+    	printf("Usage: %s \"address\" \"port\" \"transport\" \"nickname\" \"service_name\"\n
+		Length of the nickname must be from 4 to 15 symbols.\n
+		Length of the service_name must be less than 8 symbols.\n", argv[0]);
 
     return 0;
 }
