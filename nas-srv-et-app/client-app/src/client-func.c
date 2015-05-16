@@ -169,7 +169,7 @@ int recvMessageFromServer(int sockFD, connection *conn) {
 			return WRONG_SRV_IP_REQ;
 
 		deSerializer(conn, buffer);
-		printf("Server: %s\n\n", conn->messageText);
+		printf("Server response: %s\n\n", conn->messageText);
 		memset(&conn->messageText, 0, sizeof(conn->messageText));
 		return result;
 	}

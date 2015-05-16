@@ -30,11 +30,11 @@
 #define MAX_HEADER_SIZE 30
 #define MAX_PAYLOAD_SIZE 1560
 
-#define WRONG_SRV_NOTIF "You have requested a non-existent service!"
-#define WRONG_SRV_IP_NOTIF "Requested service is unavailable for you!"
-#define NO_MORE_PLACE_NOTIF "No more place for new clients"
-#define CRC_MISSMATCH_NOTIF "Checksum missmatch"
-#define SRV_IS_OFFLINE_NOTIF "Server is offline now"
+#define WRONG_SRV_NOTIF "You have requested a non-existent service!\n\0"
+#define WRONG_SRV_IP_NOTIF "Requested service is unavailable for you!\n\0"
+#define NO_MORE_PLACE_NOTIF "No more place for new clients!\n\0"
+#define CRC_MISSMATCH_NOTIF "Checksum missmatch!\n\0"
+#define SRV_IS_OFFLINE_NOTIF "Server is offline now!\n\0"
 
 extern const char SEG_WARNING[];
 extern const char ACK[];
